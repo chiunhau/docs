@@ -1,217 +1,950 @@
 {
-  "openapi": "3.1.0",
-  "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "http://sandbox.mintlify.com"
-    }
-  ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
+  "openapi": "3.0.0",
   "paths": {
-    "/plants": {
+    "/v1/assets/{chainId}/{contractAddress}/{tokenId}": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "operationId": "Get Asset",
         "parameters": [
+          {
+            "name": "chainId",
+            "required": true,
+            "in": "path",
+            "description": "Chain ID",
+            "schema": {
+              "example": 1868,
+              "type": "string"
+            }
+          },
+          {
+            "name": "contractAddress",
+            "required": true,
+            "in": "path",
+            "description": "Contract address",
+            "schema": {
+              "example": "0xfc8e7bda94874f6baa591dd70af0fda1fca201ab",
+              "type": "string"
+            }
+          },
+          {
+            "name": "tokenId",
+            "required": true,
+            "in": "path",
+            "description": "Token ID",
+            "schema": {
+              "example": "42",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get a specific asset",
+        "tags": [
+          "V1"
+        ]
+      }
+    },
+    "/v1/assets/explore": {
+      "get": {
+        "operationId": "Search Assets",
+        "parameters": [
+          {
+            "name": "chainId",
+            "required": false,
+            "in": "query",
+            "description": "Chain ID",
+            "schema": {
+              "example": 1868,
+              "type": "string"
+            }
+          },
+          {
+            "name": "contractAddress",
+            "required": false,
+            "in": "query",
+            "description": "Contract address",
+            "schema": {
+              "example": "0xfc8e7bda94874f6baa591dd70af0fda1fca201ab",
+              "type": "string"
+            }
+          },
+          {
+            "name": "ownerAddress",
+            "required": false,
+            "in": "query",
+            "description": "Owner address",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isVerified",
+            "required": false,
+            "in": "query",
+            "description": "Is verified",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "hasListings",
+            "required": false,
+            "in": "query",
+            "description": "Has listings",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
           {
             "name": "limit",
+            "required": false,
             "in": "query",
-            "description": "The maximum number of results to return",
+            "description": "Page size",
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "example": 10,
+              "type": "number"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Paginated list of assets",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/AssetPaginationDto"
                 }
               }
             }
           }
-        }
-      },
+        },
+        "summary": "Explore assets with search filters",
+        "tags": [
+          "V1"
+        ]
+      }
+    },
+    "/v1/assets/batch-transfer": {
       "post": {
-        "description": "Creates a new plant in the store",
+        "operationId": "Batch Transfer Assets",
+        "parameters": [],
         "requestBody": {
-          "description": "Plant to add to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
+                "$ref": "#/components/schemas/BatchTransferDto"
               }
             }
           }
-        }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution for batch transfer"
+          }
+        },
+        "summary": "Batch transfer assets",
+        "tags": [
+          "V1"
+        ]
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/v1/collections/{chainId}/{contractAddress}": {
+      "get": {
+        "operationId": "CollectionsController_getCollectionByAddress",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
+            "name": "chainId",
             "required": true,
+            "in": "path",
+            "description": "Chain ID",
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "example": 1868,
+              "type": "number"
+            }
+          },
+          {
+            "name": "contractAddress",
+            "required": true,
+            "in": "path",
+            "description": "Contract address",
+            "schema": {
+              "example": "0xfc8e7bda94874f6baa591dd70af0fda1fca201ab",
+              "type": "string"
             }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
+          "200": {
+            "description": "Collection found"
+          }
+        },
+        "summary": "Get a collection by address",
+        "tags": [
+          "V1"
+        ]
+      }
+    },
+    "/v1/collections/explore": {
+      "get": {
+        "operationId": "CollectionsController_exploreCollections",
+        "parameters": [
+          {
+            "name": "chainId",
+            "required": false,
+            "in": "query",
+            "description": "Chain ID",
+            "schema": {
+              "example": 1868,
+              "type": "number"
+            }
           },
-          "400": {
-            "description": "unexpected error",
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search string",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isVerified",
+            "required": false,
+            "in": "query",
+            "description": "Is verified",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Page size",
+            "schema": {
+              "example": 10,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of collections"
+          }
+        },
+        "summary": "Explore collections with search filters",
+        "tags": [
+          "V1"
+        ]
+      }
+    },
+    "/v1/orders/{hash}": {
+      "get": {
+        "operationId": "OrdersController_getOrder",
+        "parameters": [
+          {
+            "name": "hash",
+            "required": true,
+            "in": "path",
+            "description": "Order hash",
+            "schema": {
+              "example": "0xaabdbab8b4485b784e00d80943964da179a92257248e665b0f035d4daabe85f8",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/OrderDto"
                 }
               }
             }
           }
-        }
+        },
+        "summary": "Get a specific order by hash",
+        "tags": [
+          "V1"
+        ]
       }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
+    },
+    "/v1/orders": {
       "post": {
-        "description": "Information about a new plant added to the store",
+        "operationId": "OrdersController_postOrders",
+        "parameters": [],
         "requestBody": {
-          "description": "Plant added to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/PostOrdersDto"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+            "description": "List of orders"
           }
-        }
+        },
+        "summary": "Create orders",
+        "tags": [
+          "V1"
+        ]
       }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
+    },
+    "/v1/orders/list": {
+      "post": {
+        "operationId": "OrdersController_listOrders",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListOrdersDto"
               }
             }
           }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
+        },
+        "responses": {
+          "200": {
+            "description": "Execution for listing orders"
           }
-        }
+        },
+        "summary": "List orders for sale",
+        "tags": [
+          "V1"
+        ]
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+    "/v1/orders/buy": {
+      "post": {
+        "operationId": "OrdersController_buyOrders",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BuyOrdersDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution for buying orders"
+          }
+        },
+        "summary": "Buy orders",
+        "tags": [
+          "V1"
+        ]
+      }
+    },
+    "/v1/orders/cancel": {
+      "post": {
+        "operationId": "OrdersController_cancelOrders",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelOrdersDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution for canceling orders"
+          }
+        },
+        "summary": "Cancel orders",
+        "tags": [
+          "V1"
+        ]
       }
     }
-  }
+  },
+  "info": {
+    "title": "Lootex Plus API - V1",
+    "description": "V1 endpoints",
+    "version": "0.0.1",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "https://api.lootexplus.com",
+      "description": "Production"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "x-api-key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    },
+    "schemas": {
+      "ListingDto": {
+        "type": "object",
+        "properties": {
+          "unitPrice": {
+            "type": "string",
+            "description": "Unit price of the listing",
+            "example": "1000000000000000000"
+          },
+          "priceSymbol": {
+            "type": "string",
+            "description": "Price symbol of the listing",
+            "example": "ETH"
+          },
+          "quantity": {
+            "type": "string",
+            "description": "Quantity available in the listing",
+            "example": "1"
+          },
+          "offerer": {
+            "type": "string",
+            "description": "Address of the offerer",
+            "example": "0x1234567890abcdef1234567890abcdef12345678"
+          },
+          "orderHash": {
+            "type": "string",
+            "description": "Order hash of the listing",
+            "example": "0xabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef"
+          }
+        },
+        "required": [
+          "unitPrice",
+          "priceSymbol",
+          "quantity",
+          "offerer",
+          "orderHash"
+        ]
+      },
+      "CollectionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "1",
+            "description": "Collection ID"
+          },
+          "slug": {
+            "type": "string",
+            "example": "cool-nft",
+            "description": "Collection slug"
+          },
+          "chainId": {
+            "type": "number",
+            "example": 1868,
+            "description": "Chain ID"
+          },
+          "contractAddress": {
+            "type": "string",
+            "example": "0xfc8e7bda94874f6baa591dd70af0fda1fca201ab",
+            "description": "Contract address"
+          },
+          "name": {
+            "type": "string",
+            "example": "Cool NFT",
+            "description": "Collection name"
+          },
+          "imageUrl": {
+            "type": "string",
+            "example": "https://cool-nft.com/image.png",
+            "description": "Collection image"
+          },
+          "description": {
+            "type": "string",
+            "example": "Cool NFT",
+            "description": "Collection description"
+          },
+          "isVerified": {
+            "type": "boolean",
+            "example": true,
+            "description": "Whether the collection is verified"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "chainId",
+          "contractAddress"
+        ]
+      },
+      "AssetDto": {
+        "type": "object",
+        "properties": {
+          "chainId": {
+            "type": "number",
+            "example": 1868,
+            "description": "Chain ID"
+          },
+          "contractAddress": {
+            "type": "string",
+            "example": "0xfc8e7bda94874f6baa591dd70af0fda1fca201ab",
+            "description": "Contract address"
+          },
+          "tokenId": {
+            "type": "string",
+            "example": "42",
+            "description": "Token ID"
+          },
+          "name": {
+            "type": "string",
+            "example": "Cool NFT",
+            "description": "Name of the asset"
+          },
+          "description": {
+            "type": "string",
+            "example": "This is a cool NFT",
+            "description": "Description of the asset"
+          },
+          "imageUrl": {
+            "type": "string",
+            "example": "https://example.com/image.png",
+            "description": "Image URL of the asset"
+          },
+          "animationUrl": {
+            "type": "string",
+            "example": "https://example.com/animation.mp4",
+            "description": "Animation URL of the asset"
+          },
+          "tokenUri": {
+            "type": "string",
+            "example": "https://example.com/metadata.json",
+            "description": "Token URI of the asset"
+          },
+          "schema": {
+            "type": "string",
+            "example": "ERC721",
+            "description": "Schema of the asset",
+            "enum": [
+              "ERC721",
+              "ERC1155"
+            ]
+          },
+          "bestListing": {
+            "description": "Best listing for the asset",
+            "nullable": true,
+            "example": {
+              "unitPrice": "1000000000000000000",
+              "priceSymbol": "ETH",
+              "quantity": "1",
+              "offerer": "0x1234567890abcdef1234567890abcdef12345678",
+              "orderHash": "0xabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef"
+            },
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ListingDto"
+              }
+            ]
+          },
+          "collection": {
+            "description": "Collection of the asset",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CollectionDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "chainId",
+          "contractAddress",
+          "tokenId",
+          "schema"
+        ]
+      },
+      "AssetPaginationDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetDto"
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "total": {
+                "type": "number",
+                "example": 100
+              },
+              "page": {
+                "type": "number",
+                "example": 1
+              },
+              "limit": {
+                "type": "number",
+                "example": 10
+              }
+            }
+          }
+        },
+        "required": [
+          "data",
+          "pagination"
+        ]
+      },
+      "TransferItemDto": {
+        "type": "object",
+        "properties": {
+          "chainId": {
+            "type": "string",
+            "example": "1",
+            "description": "Chain ID"
+          },
+          "contractAddress": {
+            "type": "string",
+            "example": "0x123...",
+            "description": "Contract address"
+          },
+          "tokenId": {
+            "type": "string",
+            "example": "42",
+            "description": "Token ID"
+          },
+          "recipientAddress": {
+            "type": "string",
+            "example": "0xabc...",
+            "description": "Recipient address"
+          }
+        },
+        "required": [
+          "chainId",
+          "contractAddress",
+          "tokenId",
+          "recipientAddress"
+        ]
+      },
+      "BatchTransferDto": {
+        "type": "object",
+        "properties": {
+          "transfers": {
+            "description": "Transfers to perform",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransferItemDto"
+            }
+          }
+        },
+        "required": [
+          "transfers"
+        ]
+      },
+      "OrderDto": {
+        "type": "object",
+        "properties": {
+          "hash": {
+            "type": "string",
+            "example": "0xaabdbab8b4485b784e00d80943964da179a92257248e665b0f035d4daabe85f8",
+            "description": "Order hash"
+          },
+          "chainId": {
+            "type": "number",
+            "example": 1,
+            "description": "Chain ID"
+          },
+          "unitPrice": {
+            "type": "number",
+            "example": 1,
+            "description": "Unit price"
+          },
+          "priceSymbol": {
+            "type": "string",
+            "example": "ETH",
+            "description": "Price symbol"
+          },
+          "exchangeAddress": {
+            "type": "string",
+            "example": "0x0000000000000000000000000000000000000000",
+            "description": "Exchange address"
+          },
+          "seaportOrder": {
+            "type": "object",
+            "example": {},
+            "description": "Seaport order"
+          },
+          "startTime": {
+            "type": "number",
+            "example": 1753315676,
+            "description": "Start time"
+          },
+          "endTime": {
+            "type": "number",
+            "example": 1755907676,
+            "description": "End time"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2025-07-24T12:00:00.000Z",
+            "description": "Created at"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2025-07-24T12:00:00.000Z",
+            "description": "Updated at"
+          }
+        },
+        "required": [
+          "hash",
+          "chainId",
+          "unitPrice",
+          "priceSymbol",
+          "exchangeAddress",
+          "seaportOrder",
+          "startTime",
+          "endTime",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "PostOrdersDto": {
+        "type": "object",
+        "properties": {
+          "signature": {
+            "type": "string",
+            "example": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+            "description": "Signature for the orders"
+          }
+        },
+        "required": [
+          "signature"
+        ]
+      },
+      "ListOrderFeeDto": {
+        "type": "object",
+        "properties": {
+          "recipient": {
+            "type": "string",
+            "example": "0x7D878A527e86321aECd80A493E584117A907A0AB",
+            "description": "Fee recipient address"
+          },
+          "bps": {
+            "type": "number",
+            "example": 250,
+            "description": "Fee amount in basis points"
+          }
+        },
+        "required": [
+          "recipient",
+          "bps"
+        ]
+      },
+      "ListOrderItemDto": {
+        "type": "object",
+        "properties": {
+          "tokenAddress": {
+            "type": "string",
+            "example": "0xfc8e7bda94874f6baa591dd70af0fda1fca201ab",
+            "description": "Address of the token being traded"
+          },
+          "tokenType": {
+            "type": "string",
+            "enum": [
+              "ERC721",
+              "ERC1155"
+            ],
+            "description": "Type of the token (ERC721 or ERC1155)",
+            "example": "ERC721"
+          },
+          "tokenId": {
+            "type": "string",
+            "example": "142",
+            "description": "ID of the token"
+          },
+          "unitPrice": {
+            "type": "string",
+            "example": "0.1",
+            "description": "Price per unit"
+          },
+          "quantity": {
+            "type": "string",
+            "example": "1",
+            "description": "Quantity of tokens"
+          },
+          "currencyAddress": {
+            "type": "string",
+            "example": "0x4200000000000000000000000000000000000006",
+            "description": "Currency token address"
+          },
+          "currencySymbol": {
+            "type": "string",
+            "example": "WETH",
+            "description": "Currency symbol"
+          },
+          "currencyDecimals": {
+            "type": "number",
+            "example": 18,
+            "description": "Currency decimals",
+            "default": 18
+          },
+          "startTime": {
+            "type": "number",
+            "description": "Order start time",
+            "example": 1753328679
+          },
+          "endTime": {
+            "type": "number",
+            "description": "Order end time",
+            "example": 1911066278
+          },
+          "fees": {
+            "description": "Array of fee specifications",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListOrderFeeDto"
+            }
+          }
+        },
+        "required": [
+          "tokenAddress",
+          "tokenType",
+          "tokenId",
+          "unitPrice"
+        ]
+      },
+      "ListOrdersDto": {
+        "type": "object",
+        "properties": {
+          "chainId": {
+            "type": "number",
+            "example": 1868,
+            "description": "Chain ID"
+          },
+          "accountAddress": {
+            "type": "string",
+            "example": "0x7D878A527e86321aECd80A493E584117A907A0AB",
+            "description": "Account address"
+          },
+          "items": {
+            "description": "Array of listing inputs",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListOrderItemDto"
+            }
+          }
+        },
+        "required": [
+          "chainId",
+          "accountAddress",
+          "items"
+        ]
+      },
+      "BuyOrdersDto": {
+        "type": "object",
+        "properties": {
+          "chainId": {
+            "type": "number",
+            "example": 1868,
+            "description": "Chain ID"
+          },
+          "orderHashes": {
+            "example": [
+              "0xaabdbab8b4485b784e00d80943964da179a92257248e665b0f035d4daabe85f8"
+            ],
+            "description": "Order hashes to buy",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "accountAddress": {
+            "type": "string",
+            "example": "0x0000000000000000000000000000000000000000",
+            "description": "Account address"
+          }
+        },
+        "required": [
+          "chainId",
+          "orderHashes",
+          "accountAddress"
+        ]
+      },
+      "CancelOrdersDto": {
+        "type": "object",
+        "properties": {
+          "chainId": {
+            "type": "number",
+            "example": 1868,
+            "description": "Chain ID"
+          },
+          "orderHashes": {
+            "example": [
+              "0xaabdbab8b4485b784e00d80943964da179a92257248e665b0f035d4daabe85f8"
+            ],
+            "description": "Order hashes to cancel",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "chainId",
+          "orderHashes"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "x-api-key": []
+    }
+  ]
 }

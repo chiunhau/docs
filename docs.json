@@ -1,52 +1,15 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Lootex Plus",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#286cfb",
+    "light": "#ffffff",
+    "dark": "#286cfb"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.ico",
   "navigation": {
     "tabs": [
-      {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Getting started",
-            "pages": [
-              "index",
-              "quickstart",
-              "development"
-            ]
-          },
-          {
-            "group": "Customization",
-            "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
-            ]
-          }
-        ]
-      },
       {
         "tab": "API reference",
         "groups": [
@@ -57,12 +20,27 @@
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Assets",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/endpoint/get-asset",
+              "api-reference/endpoint/search-assets"
+            ]
+          },
+          {
+            "group": "Collections",
+            "pages": [
+              "api-reference/endpoint/get-collection",
+              "api-reference/endpoint/search-collections"
+            ]
+          },
+          {
+            "group": "Orders",
+            "pages": [
+              "api-reference/endpoint/get-order",
+              "api-reference/endpoint/create-orders",
+              "api-reference/endpoint/list-orders",
+              "api-reference/endpoint/buy-orders",
+              "api-reference/endpoint/cancel-orders"
             ]
           }
         ]
@@ -70,11 +48,6 @@
     ],
     "global": {
       "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
         {
           "anchor": "Community",
           "href": "https://mintlify.com/community",
@@ -90,7 +63,7 @@
   },
   "logo": {
     "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "dark": "/logo/lootex-plus-dark.svg"
   },
   "navbar": {
     "links": [
@@ -102,7 +75,7 @@
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "href": "https://dashboard.lootexplus.com"
     }
   },
   "footer": {
