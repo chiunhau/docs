@@ -280,6 +280,49 @@
         ]
       }
     },
+    "/v1/collections/trending": {
+      "get": {
+        "operationId": "CollectionsController_getTrendingCollections",
+        "parameters": [
+          {
+            "name": "chainId",
+            "required": true,
+            "in": "query",
+            "description": "The chain ID",
+            "schema": {
+              "example": 1868,
+              "type": "number"
+            }
+          },
+          {
+            "name": "timeRange",
+            "required": false,
+            "in": "query",
+            "description": "The time range",
+            "schema": {
+              "default": "one_day",
+              "example": "one_day",
+              "type": "string",
+              "enum": [
+                "one_hour",
+                "one_day",
+                "one_week",
+                "one_month"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of trending collections"
+          }
+        },
+        "summary": "Get trending collections",
+        "tags": [
+          "V1"
+        ]
+      }
+    },
     "/v1/orders/{hash}": {
       "get": {
         "operationId": "OrdersController_getOrder",
